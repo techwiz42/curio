@@ -95,21 +95,34 @@ graph TD
 
 ### Using Signal-Noise Distinction Utilities
 
+### Using Signal-Noise Distinction Utilities
+
 To use the advanced signal-noise distinction utilities:
 
 ```python
 from curious_llm.signal_noise_utils import signal_noise_distinction, multi_scale_entropy
+from curious_llm.llm_interface import HuggingFaceLLMInterface
+from transformers import AutoModel, AutoTokenizer
+
+# Initialize your chosen model and tokenizer
+model = AutoModel.from_pretrained("bert-base-uncased")  # or any other model
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")  # or any other tokenizer
+
+# Create an LLM interface
+llm_interface = HuggingFaceLLMInterface(model, tokenizer)
 
 # Analyze text for signal in high-entropy regions
 text = "Your complex input text here with potential high-entropy regions."
-signal_regions = signal_noise_distinction(text)
+signal_regions = signal_noise_distinction(text, llm_interface)
 print(f"Potential signal regions: {signal_regions}")
 
 # Perform multi-scale entropy analysis
-entropy_profiles = multi_scale_entropy(text, scales=[1, 5, 10])
+entropy_profiles = multi_scale_entropy(text, llm_interface, scales=[1, 5, 10])
 for i, profile in enumerate(entropy_profiles):
     print(f"Entropy profile at scale {i+1}: {profile}")
 ```
+
+These utilities can work with any language model that implements the `LLMInterface`. This allows for flexibility in choosing the underlying model while maintaining the ability to perform advanced signal-noise distinction.
 
 ## Project Structure
 

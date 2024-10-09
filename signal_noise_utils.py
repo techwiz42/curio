@@ -1,20 +1,16 @@
-import numpy as np
+iimport numpy as np
 from scipy.fft import fft
 from sklearn.cluster import KMeans
-from transformers import AutoModel, AutoTokenizer
+from .llm_interface import LLMInterface
 
-def multi_scale_entropy(text, scales=[1, 5, 10]):
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-    model = AutoModel.from_pretrained("bert-base-uncased")
-    
-    tokens = tokenizer(text, return_tensors="pt")
-    outputs = model(**tokens)
-    embeddings = outputs.last_hidden_state.squeeze(0)
+def multi_scale_entropy(text, llm_interface, scales=[1, 5, 10]):
+    tokens = llm_interface.tokenize(text)
+    embeddings = llm_interface.get_embeddings(tokens)
     
     entropy_profiles = []
     for scale in scales:
-        windowed_embeddings = [embeddings[i:i+scale].mean(dim=0) for i in range(0, len(embeddings) - scale + 1)]
-        entropy = [-np.sum(e.softmax(dim=0) * e.log_softmax(dim=0)).item() for e in windowed_embeddings]
+        windowed_embeddings = [embeddings[i:i+scale].mean(axis=0) for i in range(0, len(embeddings) - scale + 1)]
+        entropy = [-np.sum(e * np.log(e + 1e-10)) for e in windowed_embeddings]
         entropy_profiles.append(entropy)
     
     return entropy_profiles
@@ -30,15 +26,12 @@ def frequency_analysis(text):
     fft_result = fft(char_values)
     return np.abs(fft_result)
 
-def signal_noise_distinction(text, entropy_threshold=0.7):
-    entropy_profiles = multi_scale_entropy(text)
+def signal_noise_distinction(text, llm_interface, entropy_threshold=0.7):
+    entropy_profiles = multi_scale_entropy(text, llm_interface)
     high_entropy_regions = [i for i, e in enumerate(entropy_profiles[0]) if e > entropy_threshold]
     
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-    model = AutoModel.from_pretrained("bert-base-uncased")
-    tokens = tokenizer(text, return_tensors="pt")
-    outputs = model(**tokens)
-    embeddings = outputs.last_hidden_state.squeeze(0)
+    tokens = llm_interface.tokenize(text)
+    embeddings = llm_interface.get_embeddings(tokens)
     
     cluster_labels = semantic_clustering(high_entropy_regions, embeddings)
     freq_analysis = frequency_analysis(text)
@@ -52,7 +45,24 @@ def signal_noise_distinction(text, entropy_threshold=0.7):
     
     return signal_regions
 
-# Usage
+# Usage example (to be placed in README or documentation)
+"""
+from curious_llm.llm_interface import HuggingFaceLLMInterface
+from transformers import AutoModel, AutoTokenizer
+
+# Initialize your chosen model and tokenizer
+model = AutoModel.from_pretrained("bert-base-uncased")  # or any other model
+tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")  # or any other tokenizer
+
+# Create an LLM interface
+llm_interface = HuggingFaceLLMInterface(model, tokenizer)
+
+# Use the signal noise utilities
 text = "Your input text here with potential high-entropy regions."
-signal_regions = signal_noise_distinction(text)
+signal_regions = signal_noise_distinction(text, llm_interface)
 print(f"Potential signal regions: {signal_regions}")
+
+entropy_profiles = multi_scale_entropy(text, llm_interface)
+for i, profile in enumerate(entropy_profiles):
+    print(f"Entropy profile at scale {i+1}: {profile}")
+"""
