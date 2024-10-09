@@ -95,8 +95,6 @@ graph TD
 
 ### Using Signal-Noise Distinction Utilities
 
-### Using Signal-Noise Distinction Utilities
-
 To use the advanced signal-noise distinction utilities:
 
 ```python
@@ -134,27 +132,6 @@ These utilities can work with any language model that implements the `LLMInterfa
   - `query_generator.py`: Implements the curiosity-driven query generator
   - `llm_interface.py`: Provides an abstract interface for different LLMs
   - `signal_noise_utils.py`: Utilities for distinguishing signal from noise in high-entropy regions
-
-## Contributing
-
-Contributions to CuriousLLM are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Citation
-
-If you use CuriousLLM in your research, please cite it as follows:
-
-```
-@software{curious_llm2023,
-  author = {Your Name},
-  title = {CuriousLLM: Entropy-Based Curiosity Framework for Language Models},
-  year = {2023},
-  url = {https://github.com/yourusername/curious-llm}
-}
-```
 
 ## Acknowledgments
 
