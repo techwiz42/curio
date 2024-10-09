@@ -1,0 +1,10 @@
+graph TD
+    A[Input] --> B[Entropy Calculation Module]
+    B --> C[Existing LLM]
+    C --> D[Output]
+    B --> E[Attention Modification Layer]
+    E --> C
+    D --> F[Curiosity Query Generator]
+    F --> G[Additional Information Seeker]
+    G --> H[Integration Module]
+    H --> I[Final Output]
