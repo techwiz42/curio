@@ -122,6 +122,24 @@ for i, profile in enumerate(entropy_profiles):
 
 These utilities can work with any language model that implements the `LLMInterface`. This allows for flexibility in choosing the underlying model while maintaining the ability to perform advanced signal-noise distinction.
 
+## Testing
+
+To run the unit tests for CuriousLLM, use the following commands:
+
+```bash
+python -m unittest test_llm_interface.py
+python -m unittest test_signal_noise_utils.py
+python -m unittest test_curious_llm.py
+```
+
+Alternatively, you can run all tests at once using:
+
+```bash
+python -m unittest discover tests
+```
+
+Make sure you have all the required dependencies installed and that you're in the root directory of the project when running these commands.
+
 ## Project Structure
 
 - `curious_llm/`
